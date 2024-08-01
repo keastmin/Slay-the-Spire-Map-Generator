@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: b9ba44f47fb1c9d40949180e546ffa3d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - normalNode: {fileID: 11400000, guid: 370d061d4f67b64469ed2a00a08ff838, type: 2}
+  - eventNode: {fileID: 11400000, guid: 5ceb41fbfd379a145aa52a4bf897ffb6, type: 2}
+  - eliteNode: {fileID: 11400000, guid: 07cf825e357339d4db15c2a85794e03a, type: 2}
+  - restNode: {fileID: 11400000, guid: f9bd3c0e2bfcc6a4abf0500840d0b1e9, type: 2}
+  - merchantNode: {fileID: 11400000, guid: 697f0c62823948c448252029906a5ed9, type: 2}
+  - tresureNode: {fileID: 11400000, guid: 548ff7c438b7fce4e92131b56f977712, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
