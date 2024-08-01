@@ -270,6 +270,7 @@ public class MapGenerator : MonoBehaviour
                 if(CheckRule(x, y))
                 {
                     Rule2_Compliance(y, changeTypeHash);
+                    Rule3_Compliance(x, y, changeTypeHash);
 
                     if (changeTypeHash.Count >= 5)
                     {
@@ -310,6 +311,7 @@ public class MapGenerator : MonoBehaviour
     bool CheckRule(int x, int y)
     {
         if (Rule2_Check(x, y)) return true;
+        if (Rule3_Check(x, y)) return true;
         return false;
     }
 
@@ -321,12 +323,43 @@ public class MapGenerator : MonoBehaviour
         return false;
     }
 
+    bool Rule3_Check(int x, int y)
+    {
+        NodeType currType = nodeGrid[x, y].nodeType;
+        if(currType == NodeType.Elite || currType == NodeType.Rest || currType == NodeType.Merchant)
+        {
+            foreach(Node prev in nodeGrid[x, y].prevNodes)
+            {
+                if (prev.nodeType == currType) return true;
+            }
+            foreach(Node next in nodeGrid[x, y].nextNodes)
+            {
+                if (next.nodeType == currType) return true;
+            }
+        }
+        return false;
+    }
+
     void Rule2_Compliance(int y, HashSet<NodeType> hash)
     {
         if(y < 5)
         {
             hash.Add(NodeType.Elite);
             hash.Add(NodeType.Rest);
+        }
+    }
+
+    void Rule3_Compliance(int x, int y, HashSet<NodeType> hash)
+    {
+        foreach(Node prev in nodeGrid[x, y].prevNodes)
+        {
+            if (prev.nodeType == NodeType.Elite || prev.nodeType == NodeType.Rest || prev.nodeType == NodeType.Merchant)
+                hash.Add(prev.nodeType);
+        }
+        foreach (Node next in nodeGrid[x, y].nextNodes)
+        {
+            if (next.nodeType == NodeType.Elite || next.nodeType == NodeType.Rest || next.nodeType == NodeType.Merchant)
+                hash.Add(next.nodeType);
         }
     }
 
