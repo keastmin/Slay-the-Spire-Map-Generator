@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,7 @@ public class MapGenerator : MonoBehaviour
 {
     public Transform mapImage;
     public Button button;
+    public Button bossButton;
     public RawImage lineDot;
 
     public int col = 7;
@@ -15,6 +17,7 @@ public class MapGenerator : MonoBehaviour
     public float paddingY = 120f;
 
     private Vector2[,] positionGrid;
+    private Vector2 bossRoomPos;
     private Node[,] nodeGrid;
     private HashSet<int>[,] paths;  // Next Path X Index
 
@@ -39,13 +42,14 @@ public class MapGenerator : MonoBehaviour
         ConnectPathLine();
         CreateNode();
         CompileNode();
+        ConnectBossRoom();
     }
 
     private void InitPositionGrid()
     {
         RectTransform rectTransform = mapImage.GetComponent<RectTransform>();
         float width = rectTransform.rect.width - paddingX * 2;
-        float height = rectTransform.rect.height - paddingY * 2;
+        float height = rectTransform.rect.height - paddingY * 2 - 100;
         float spacingX = width / (col + 1);
         float spacingY = height / (row + 1);
         float startX = paddingX + spacingX;
@@ -64,6 +68,8 @@ public class MapGenerator : MonoBehaviour
                 positionGrid[x, y] = new Vector2(posX, posY);
             }
         }
+
+        bossRoomPos = new Vector2(width / 2 + spacingX, startY + row * spacingY);
     }
 
     private void MakePath()
@@ -129,6 +135,7 @@ public class MapGenerator : MonoBehaviour
 
     void ConnectPathLine()
     {
+        HashSet<int> endIdx = new HashSet<int>();
         for(int y = 0; y < row - 1; y++)
         {
             for(int x = 0; x < col; x++)
@@ -136,8 +143,13 @@ public class MapGenerator : MonoBehaviour
                 foreach(int nextX in paths[x, y])
                 {
                     DrawLine(positionGrid[x, y], positionGrid[nextX, y + 1]);
+                    if (y + 1 == row - 1) endIdx.Add(nextX);
                 }
             }
+        }
+        foreach(int idx in endIdx)
+        {
+            DrawLine(positionGrid[idx, row - 1], bossRoomPos);
         }
     }
 
@@ -271,6 +283,7 @@ public class MapGenerator : MonoBehaviour
                 {
                     Rule2_Compliance(y, changeTypeHash);
                     Rule3_Compliance(x, y, changeTypeHash);
+                    Rule4_Compliance(x, y, changeTypeHash);
 
                     if (changeTypeHash.Count >= 5)
                     {
@@ -312,6 +325,7 @@ public class MapGenerator : MonoBehaviour
     {
         if (Rule2_Check(x, y)) return true;
         if (Rule3_Check(x, y)) return true;
+        if (Rule4_Check(x, y)) return true;
         return false;
     }
 
@@ -340,6 +354,26 @@ public class MapGenerator : MonoBehaviour
         return false;
     }
 
+    bool Rule4_Check(int x, int y)
+    {
+        foreach (Node prev in nodeGrid[x, y].prevNodes)
+        {
+            if (prev.nextNodes.Count > 1)
+            {
+                HashSet<NodeType> typeHash = new HashSet<NodeType>();
+                foreach (Node next in prev.nextNodes)
+                {
+                    typeHash.Add(next.nodeType);
+                }
+                if (typeHash.Count == 1)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     void Rule2_Compliance(int y, HashSet<NodeType> hash)
     {
         if(y < 5)
@@ -360,6 +394,22 @@ public class MapGenerator : MonoBehaviour
         {
             if (next.nodeType == NodeType.Elite || next.nodeType == NodeType.Rest || next.nodeType == NodeType.Merchant)
                 hash.Add(next.nodeType);
+        }
+    }
+
+    void Rule4_Compliance(int x, int y, HashSet<NodeType> hash)
+    {
+        foreach(Node prev in nodeGrid[x, y].prevNodes)
+        {
+            if(prev.nextNodes.Count > 1)
+            {
+                HashSet<NodeType> typeHash = new HashSet<NodeType>();
+                foreach(Node next in prev.nextNodes)
+                {
+                    if (next != nodeGrid[x, y]) typeHash.Add(next.nodeType);
+                }
+                if(typeHash.Count == 1) hash.Add(typeHash.First());
+            }
         }
     }
 
@@ -385,4 +435,21 @@ public class MapGenerator : MonoBehaviour
             }
         }
     }
+
+    void ConnectBossRoom()
+    {
+        Button boss = Instantiate(bossButton, mapImage);
+        RectTransform nodeRect = boss.GetComponent<RectTransform>();
+        Node bossNode = boss.GetComponent<Node>();
+        nodeRect.anchoredPosition = bossRoomPos;
+        nodeRect.localScale = Vector2.one;
+        for (int i = 0; i < col; i++)
+        {
+            if (nodeGrid[i, row - 1] != null)
+            {
+                nodeGrid[i, row - 1].nextNodes.Add(bossNode);
+            }
+        }
+    }
 }
+

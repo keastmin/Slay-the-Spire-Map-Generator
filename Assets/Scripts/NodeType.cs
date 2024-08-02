@@ -5,5 +5,6 @@ public enum NodeType
     Elite,
     Rest,
     Merchant,
-    Treasure
+    Treasure,
+    Boss
 }
