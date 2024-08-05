@@ -152,6 +152,7 @@ MonoBehaviour:
   floorNodes: []
   prevNodes: []
   checkImage: {fileID: 5044764444671600534}
+  rectTransform: {fileID: 0}
 --- !u!95 &6820116931471242452
 Animator:
   serializedVersion: 5

@@ -249,7 +249,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: -0.00024414062}
+  m_AnchoredPosition: {x: 0, y: 0.00012207031}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &414373957
@@ -283,7 +283,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 150
     m_Bottom: 100
-  m_ChildAlignment: 4
+  m_ChildAlignment: 5
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
@@ -304,7 +304,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9961d796cc8adc4c92174acfc4af266, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttons: []
+  viewNodePos: 100
+  scrollRect: {fileID: 448623918}
+  viewportTransform: {fileID: 266328310}
 --- !u!1 &448623916
 GameObject:
   m_ObjectHideFlags: 0

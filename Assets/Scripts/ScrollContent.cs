@@ -5,33 +5,30 @@ using UnityEngine.UI;
 
 public class ScrollContent : MonoBehaviour
 {
+    public float viewNodePos = 100f;
+    public ScrollRect scrollRect;
+    public RectTransform viewportTransform;
     RectTransform contentTransform;
-    public Button[] buttons;
-    int index = 0;
 
-    private void Start()
+    private void Awake()
     {
         contentTransform = GetComponent<RectTransform>();
-        for(int i = 0; i < buttons.Length; i++)
-        {
-            RectTransform rectTransform = buttons[i].GetComponent<RectTransform>();
-            Debug.Log(rectTransform.position.y + " " + rectTransform.anchoredPosition.y);
-        }
-        Debug.Log(contentTransform.position.y + " " + contentTransform.anchoredPosition.y);
     }
 
-    public void OnClickTest()
+    private void OnEnable()
     {
-        RectTransform rectTransform = buttons[index].GetComponent<RectTransform>();
-        float posY = rectTransform.anchoredPosition.y;
-        posY -= 100;
-
-        contentTransform.anchoredPosition = new Vector2(contentTransform.anchoredPosition.x, -posY);
-
-        index++;
-        if (index == buttons.Length)
+        Node node = MapGenerator.instance.GetButtonPosY();
+        if (node != null)
         {
-            index = 0;
+            RectTransform nodeRect = node.rectTransform;
+            float contentHeight = contentTransform.rect.height;
+            float viewportHeight = viewportTransform.rect.height;
+            float movePos = nodeRect.position.y - viewNodePos;
+            Vector2 newVector = contentTransform.anchoredPosition;
+            newVector.y -= movePos;
+            if (newVector.y > 0) newVector.y = 0;
+            if (newVector.y < viewportHeight - contentHeight) newVector.y = viewportHeight - contentHeight;
+            contentTransform.anchoredPosition = newVector;
         }
     }
 }

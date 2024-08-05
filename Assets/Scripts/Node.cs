@@ -11,6 +11,7 @@ public class Node : MonoBehaviour
     public List<Node> prevNodes;
     public Image checkImage;
     public NodeType nodeType { get; private set; }
+    public RectTransform rectTransform;
 
     private Button button;
     private Animator animator;
@@ -28,6 +29,7 @@ public class Node : MonoBehaviour
 
     private void Awake()
     {
+        rectTransform = GetComponent<RectTransform>();
         button = GetComponent<Button>();
         nextNodes = new List<Node>();
         prevNodes = new List<Node>();

@@ -1,11 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MapGenerator : MonoBehaviour
 {
+    static private MapGenerator _instance;
+    static public MapGenerator instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<MapGenerator>();
+            }
+            return _instance;
+        }
+    }
+
     public Transform mapImage;
     public Button button;
     public Button bossButton;
@@ -19,6 +34,7 @@ public class MapGenerator : MonoBehaviour
     private Vector2[,] positionGrid;
     private Vector2 bossRoomPos;
     private Node[,] nodeGrid;
+    private Node bossNode;
     private HashSet<int>[,] paths;  // Next Path X Index
 
     void Awake()
@@ -415,7 +431,7 @@ public class MapGenerator : MonoBehaviour
 
     void ChangeNode(int x, int y, HashSet<NodeType> hash)
     {
-        Debug.Log("변경 = " + x + " " + y);
+        //Debug.Log("변경 = " + x + " " + y);
         while (hash.Contains(nodeGrid[x, y].nodeType))
         {
             nodeGrid[x, y].NodeSet();
@@ -440,7 +456,8 @@ public class MapGenerator : MonoBehaviour
     {
         Button boss = Instantiate(bossButton, mapImage);
         RectTransform nodeRect = boss.GetComponent<RectTransform>();
-        Node bossNode = boss.GetComponent<Node>();
+        Node node = boss.GetComponent<Node>();
+        bossNode = node;
         nodeRect.anchoredPosition = bossRoomPos;
         nodeRect.localScale = Vector2.one;
         for (int i = 0; i < col; i++)
@@ -450,6 +467,23 @@ public class MapGenerator : MonoBehaviour
                 nodeGrid[i, row - 1].nextNodes.Add(bossNode);
             }
         }
+    }
+
+    public Node GetButtonPosY()
+    {
+        if (nodeGrid == null || bossNode == null) return null;
+
+        for(int i = 0; i < row; i++)
+        {
+            for(int j = 0; j < col; j++)
+            {
+                if (nodeGrid[j, i] != null && nodeGrid[j, i].selectState == true)
+                {
+                    return nodeGrid[j, i];
+                }
+            }
+        }
+        return bossNode;
     }
 }
 
