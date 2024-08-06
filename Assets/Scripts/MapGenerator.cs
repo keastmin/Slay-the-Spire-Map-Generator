@@ -59,6 +59,7 @@ public class MapGenerator : MonoBehaviour
         CreateNode();
         CompileNode();
         ConnectBossRoom();
+        SetStartNodeActive();
     }
 
     private void InitPositionGrid()
@@ -201,7 +202,6 @@ public class MapGenerator : MonoBehaviour
                 nodeQ.Enqueue(new Tuple<int, int>(i, 0));
                 visited[i, 0] = true;
                 InstantiateButton(i, 0);
-                nodeGrid[i, 0].selectState = true;
             }
         }
 
@@ -454,17 +454,30 @@ public class MapGenerator : MonoBehaviour
 
     void ConnectBossRoom()
     {
-        Button boss = Instantiate(bossButton, mapImage);
+        Button boss = Instantiate(button, mapImage);
         RectTransform nodeRect = boss.GetComponent<RectTransform>();
         Node node = boss.GetComponent<Node>();
+        node.NodeSet(NodeReturn.instance.GetBossNodeData());
         bossNode = node;
         nodeRect.anchoredPosition = bossRoomPos;
+        nodeRect.sizeDelta = new Vector2(70, 70);
         nodeRect.localScale = Vector2.one;
         for (int i = 0; i < col; i++)
         {
             if (nodeGrid[i, row - 1] != null)
             {
                 nodeGrid[i, row - 1].nextNodes.Add(bossNode);
+            }
+        }
+    }
+
+    private void SetStartNodeActive()
+    {
+        for(int x = 0; x < col; x++)
+        {
+            if (nodeGrid[x, 0] != null)
+            {
+                nodeGrid[x, 0].selectState = true;
             }
         }
     }
@@ -484,6 +497,22 @@ public class MapGenerator : MonoBehaviour
             }
         }
         return bossNode;
+    }
+
+    public List<Node> GetSameTypeNodes(NodeType type)
+    {
+        List<Node> nodes = new List<Node>();
+        for(int y = 0; y < row; y++)
+        {
+            for(int x = 0; x < col; x++)
+            {
+                if (nodeGrid[x, y] != null && nodeGrid[x, y].nodeType == type)
+                {
+                    nodes.Add(nodeGrid[x, y]);
+                }
+            }
+        }
+        return nodes;
     }
 }
 

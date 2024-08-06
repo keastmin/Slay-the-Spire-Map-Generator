@@ -14,6 +14,9 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public NodeType nodeType { get; private set; }
     public RectTransform rectTransform;
 
+
+    private Color unselectColor;
+    private Color selectColor;
     private Button button;
     private Animator animator;
     private Image nodeSprite;
@@ -30,6 +33,8 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void Awake()
     {
+        unselectColor = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+        selectColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         rectTransform = GetComponent<RectTransform>();
         button = GetComponent<Button>();
         nextNodes = new List<Node>();
@@ -38,7 +43,6 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         animator = GetComponent<Animator>();
         _selectState = false;
         button.interactable = false;
-        nodeSprite.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
     }
 
     private void OnEnable()
@@ -51,6 +55,7 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         data = NodeReturn.instance.GetRandomNodeData();
         nodeSprite.sprite = data.sprite;
         nodeType = data.type;
+        nodeSprite.color = unselectColor;
     }
 
     public void NodeSet(NodeData nodeData)
@@ -58,6 +63,7 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         data = nodeData;
         nodeSprite.sprite = data.sprite;
         nodeType = data.type;
+        nodeSprite.color = unselectColor;
     }
 
     private void ActiveAnimation()
@@ -66,7 +72,7 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         animator.SetBool("IsActive", _selectState);
         if (_selectState)
         {
-            nodeSprite.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            nodeSprite.color = selectColor;
         }
     }
 
@@ -76,7 +82,7 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         StartCoroutine("CheckNode");
         foreach(Node node in floorNodes)
         {
-            node.nodeSprite.color = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+            node.nodeSprite.color = unselectColor;
             node.selectState = false;
         }
         foreach(Node node in nextNodes)
@@ -99,11 +105,13 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        nodeSprite.color = selectColor;
         animator.SetBool("IsMouseOn", true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        nodeSprite.color = (selectState) ? selectColor : unselectColor;
         animator.SetBool("IsMouseOn", false);
     }
 }

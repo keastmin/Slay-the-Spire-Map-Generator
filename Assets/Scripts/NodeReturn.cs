@@ -14,6 +14,8 @@ public class NodeReturn : MonoBehaviour
     private NodeData merchantNode;
     [SerializeField]
     private NodeData tresureNode;
+    [SerializeField]
+    private NodeData bossNode;
 
     // Instance for probabilistic return of nodes to be used by MapGenerator.cs and Node.cs
     static public NodeReturn instance;
@@ -47,5 +49,10 @@ public class NodeReturn : MonoBehaviour
     public NodeData GetNormalNodeData()
     {
         return normalNode;
+    }
+
+    public NodeData GetBossNodeData()
+    {
+        return bossNode;
     }
 }
