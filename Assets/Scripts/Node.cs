@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Node : MonoBehaviour
+public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public NodeData data;
     public List<Node> nextNodes;
@@ -94,5 +95,15 @@ public class Node : MonoBehaviour
             yield return null;
         }
         checkImage.fillAmount = 1.0f;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        animator.SetBool("IsMouseOn", true);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        animator.SetBool("IsMouseOn", false);
     }
 }
