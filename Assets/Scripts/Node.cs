@@ -20,6 +20,7 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     private Button button;
     private Animator animator;
     private Image nodeSprite;
+    private bool prevSelect;
     private bool _selectState;
     public bool selectState
     {
@@ -41,6 +42,7 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         prevNodes = new List<Node>();
         nodeSprite = GetComponent<Image>();
         animator = GetComponent<Animator>();
+        prevSelect = false;
         _selectState = false;
         button.interactable = false;
     }
@@ -78,6 +80,7 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnClick()
     {
+        prevSelect = true;
         selectState = false;
         StartCoroutine("CheckNode");
         foreach(Node node in floorNodes)
@@ -111,7 +114,7 @@ public class Node : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        nodeSprite.color = (selectState) ? selectColor : unselectColor;
+        nodeSprite.color = (selectState || prevSelect) ? selectColor : unselectColor;
         animator.SetBool("IsMouseOn", false);
     }
 }
